@@ -40,6 +40,8 @@ class Leg:
     type: str
     odds: int
     result: str | None  # hit | miss | push | None (pending)
+    opponent: str = ""  # "at New York Jets" / "vs Seattle Seahawks"
+    score: str | None = None  # final score of the game, None until it ends
 
     @property
     def decimal(self) -> float:
@@ -115,7 +117,7 @@ class Week:
         return min(hits, key=lambda l: l.implied) if hits else None
 
     @property
-    def goat(self) -> Leg | None:
+    def blown_layup(self) -> Leg | None:
         misses = [l for l in self.legs if l.result == MISS]
         return max(misses, key=lambda l: l.implied) if misses else None
 
@@ -180,12 +182,13 @@ class Season:
         avg_implied = sum(l.implied for l in legs) / len(legs) if legs else None
         avg_odds = decimal_to_american(sum(l.decimal for l in legs) / len(legs)) if legs else None
         mvps = sum(1 for w in self.weeks if w.mvp and w.mvp.person == person)
-        goats = sum(1 for w in self.weeks if w.goat and w.goat.person == person)
+        blown_layups = sum(1 for w in self.weeks
+                           if w.blown_layup and w.blown_layup.person == person)
         anchors = sum(1 for w in self.weeks if w.status == "lost"
                       and [a.person for a in w.anchors] == [person])
         return dict(person=person, hits=hits, misses=misses, pushes=pushes,
                     pending=pending, rate=rate, avg_implied=avg_implied,
-                    avg_odds=avg_odds, mvps=mvps, goats=goats, sole_anchors=anchors,
+                    avg_odds=avg_odds, mvps=mvps, blown_layups=blown_layups, sole_anchors=anchors,
                     current_streak=current_streak(settled),
                     longest_hit_streak=longest_streak(settled, HIT))
 

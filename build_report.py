@@ -1,4 +1,4 @@
-"""Build the Brolay season report PDF.
+"""Build the Pine Meadow Brolay season report PDF.
 
 Usage:  python build_report.py            -> writes Brolay_<season>.pdf next to this file
 """
@@ -23,6 +23,8 @@ from brolay_stats import HIT, MISS, PUSH, Season, fmt_american
 
 HERE = Path(__file__).parent
 DATA = HERE / "brolay_data.json"
+LOGO = HERE / "nfl_logo.png"
+NAME = "Pine Meadow Brolay"
 
 # ---------------------------------------------------------------- palette
 INK = colors.HexColor("#0b0b0b")
@@ -47,7 +49,7 @@ def style(name, **kw):
     return ParagraphStyle(name, **base)
 
 S = dict(
-    title=style("title", fontName="Helvetica-Bold", fontSize=40, leading=44),
+    title=style("title", fontName="Helvetica-Bold", fontSize=30, leading=34),
     subtitle=style("subtitle", fontSize=16, leading=20, textColor=INK2),
     tag=style("tag", fontSize=10.5, leading=14, textColor=INK2),
     h1=style("h1", fontName="Helvetica-Bold", fontSize=22, leading=26),
@@ -232,23 +234,23 @@ def risk_table(season: Season):
 
 
 def awards_tally(season: Season):
-    data = [["Name", "MVP", "Goat", "Sole anchor"]]
+    data = [["Name", "MVP", "Blown Layup", "Sole anchor"]]
     for p in season.members:
         r = season.person_stats(p)
-        data.append([Paragraph(p, S["cell_b"]), r["mvps"], r["goats"], r["sole_anchors"]])
+        data.append([Paragraph(p, S["cell_b"]), r["mvps"], r["blown_layups"], r["sole_anchors"]])
     t = base_table(data, [1.2 * inch, 0.9 * inch, 0.9 * inch, 1.1 * inch])
     t.setStyle(TableStyle([("ALIGN", (1, 0), (-1, -1), "CENTER")]))
     return t
 
 
 def awards_log(season: Season):
-    data = [["Week", "Result", "MVP", "Goat", "Anchor"]]
+    data = [["Week", "Result", "MVP", "Blown Layup", "Anchor"]]
     for w in season.weeks:
         label, _, _ = status_label(w.status)
         mvp = f"{w.mvp.person} ({fmt_american(w.mvp.odds)})" if w.mvp else "-"
-        goat = f"{w.goat.person} ({fmt_american(w.goat.odds)})" if w.goat else "-"
+        layup = f"{w.blown_layup.person} ({fmt_american(w.blown_layup.odds)})" if w.blown_layup else "-"
         anchor = ", ".join(a.person for a in w.anchors) if w.status == "lost" else "-"
-        data.append([str(w.week), label.title(), mvp, goat, anchor])
+        data.append([str(w.week), label.title(), mvp, layup, anchor])
     t = base_table(data, [0.6 * inch, 1.0 * inch, 1.6 * inch, 1.6 * inch, 1.6 * inch])
     return t
 
@@ -266,16 +268,20 @@ def week_page(w, season: Season):
     ]))
     story = [header, P(w.date.strftime("%A, %B %d, %Y").replace(" 0", " "), "tag"), Spacer(1, 10)]
 
-    data = [["Who", "Pick", "Type", "Odds", "Implied", "Result"]]
-    cmds = [("ALIGN", (3, 0), (-1, -1), "CENTER")]
+    data = [["Who", "Pick", "Game", "Type", "Odds", "Implied", "Result"]]
+    cmds = [("ALIGN", (4, 0), (-1, -1), "CENTER")]
     for i, l in enumerate(w.legs, 1):
         res = {HIT: "HIT", MISS: "MISS", PUSH: "PUSH", None: "OPEN"}[l.result]
-        data.append([Paragraph(l.person, S["cell_b"]), Paragraph(l.pick, S["cell"]), l.type.title(),
+        game = (f'{l.opponent or "-"}<br/><font size="8.5" color="{INK2.hexval()}">'
+                f'{l.score or "Not final"}</font>')
+        data.append([Paragraph(l.person, S["cell_b"]), Paragraph(l.pick, S["cell"]),
+                     Paragraph(game, S["cell"]), l.type.title(),
                      fmt_american(l.odds), pct(l.implied), res])
         col = {HIT: (GOOD, GOOD_BG), MISS: (BAD, BAD_BG)}.get(l.result, (INK2, PEND_BG))
-        cmds += [("TEXTCOLOR", (5, i), (5, i), col[0]), ("BACKGROUND", (5, i), (5, i), col[1]),
-                 ("FONTNAME", (5, i), (5, i), "Helvetica-Bold"), ("FONTSIZE", (5, i), (5, i), 8.5)]
-    t = base_table(data, [0.8 * inch, 2.9 * inch, 0.9 * inch, 0.7 * inch, 0.8 * inch, 0.9 * inch])
+        cmds += [("TEXTCOLOR", (6, i), (6, i), col[0]), ("BACKGROUND", (6, i), (6, i), col[1]),
+                 ("FONTNAME", (6, i), (6, i), "Helvetica-Bold"), ("FONTSIZE", (6, i), (6, i), 8.5)]
+    t = base_table(data, [0.65 * inch, 1.95 * inch, 1.8 * inch, 0.6 * inch, 0.55 * inch,
+                          0.7 * inch, 0.75 * inch])
     t.setStyle(TableStyle(cmds))
     story += [t, Spacer(1, 14)]
 
@@ -300,8 +306,8 @@ def week_page(w, season: Season):
         v = f"Sunk by {who}. {money(w.stake)} gone."
         if len(names) == 1 and len(hits) == len(w.legs) - 1:
             v += f" The other {len(hits)} legs all hit, so this one stings."
-        if w.goat:
-            v += f" Goat: {w.goat.person}, whose {fmt_american(w.goat.odds)} pick was the safest miss."
+        if w.blown_layup:
+            v += f" Blown Layup: {w.blown_layup.person}, whose {fmt_american(w.blown_layup.odds)} pick was the safest miss."
     elif w.status == "void":
         v = "Every leg pushed. Stake refunded."
     else:
@@ -313,12 +319,26 @@ def week_page(w, season: Season):
     return story
 
 
+def title_block(season: Season):
+    """NFL logo beside the report name; text only if the logo file is missing."""
+    text = [Paragraph(NAME.upper(), S["title"]), Paragraph(f"{season.year} Season", S["subtitle"])]
+    if not LOGO.exists():
+        return KeepTogether(text)
+    size = 1.0 * inch
+    t = Table([[Image(str(LOGO), width=size, height=size), text]],
+              colWidths=[size + 0.15 * inch, PAGE_W - size - 0.15 * inch])
+    t.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                           ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                           ("TOPPADDING", (0, 0), (-1, -1), 0), ("BOTTOMPADDING", (0, 0), (-1, -1), 6)]))
+    return t
+
+
 # ---------------------------------------------------------------- document
 def on_page(canvas, doc):
     canvas.saveState()
     canvas.setFont("Helvetica", 8)
     canvas.setFillColor(MUTED)
-    canvas.drawString(0.75 * inch, 0.5 * inch, f"Brolay {doc.season_year}")
+    canvas.drawString(0.75 * inch, 0.5 * inch, f"{NAME} {doc.season_year}")
     canvas.drawRightString(letter[0] - 0.75 * inch, 0.5 * inch, f"Page {doc.page}")
     canvas.restoreState()
 
@@ -328,13 +348,13 @@ def build(data_path: Path = DATA, out_path: Path | None = None) -> Path:
     out_path = out_path or HERE / f"Brolay_{season.year}.pdf"
     doc = SimpleDocTemplate(str(out_path), pagesize=letter, leftMargin=0.75 * inch,
                             rightMargin=0.75 * inch, topMargin=0.75 * inch, bottomMargin=0.8 * inch,
-                            title=f"Brolay {season.year}", author="The Brolay Group")
+                            title=f"{NAME} {season.year}", author=f"The {NAME} Group")
     doc.season_year = season.year
     names = " · ".join(season.members)
     story = []
 
     # ---- page 1: season summary
-    story += [Paragraph("BROLAY", S["title"]), Paragraph(f"{season.year} Season", S["subtitle"]), Spacer(1, 4),
+    story += [title_block(season), Spacer(1, 4),
               P(f"{names}. ${season.stake_per_person:.0f} each, one leg each, every Sunday.", "tag"),
               P(f"Through Week {season.weeks[-1].week if season.weeks else 0}. "
                 f"Updated {date.today().strftime('%B %d, %Y').replace(' 0', ' ')}.", "muted"),
@@ -364,7 +384,7 @@ def build(data_path: Path = DATA, out_path: Path | None = None) -> Path:
               P("Lower implied probability means longer odds. Edge is actual minus implied, in percentage points.", "small"),
               Spacer(1, 18)]
     story += [Paragraph("Awards", S["h2"]), Spacer(1, 4),
-              P("<b>MVP</b>: longest-odds leg that hit. <b>Goat</b>: safest-odds leg that missed. "
+              P("<b>MVP</b>: longest-odds leg that hit. <b>Blown Layup</b>: safest-odds leg that missed. "
                 "<b>Sole anchor</b>: the only miss in a losing week.", "small"), Spacer(1, 6),
               awards_tally(season), Spacer(1, 14),
               KeepTogether([Paragraph("Week by week", S["h2"]), Spacer(1, 4), awards_log(season)])]

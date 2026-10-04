@@ -42,11 +42,11 @@ def test_won_lost_push_void():
     assert void.status == "void" and void.net == 0
 
 
-def test_mvp_and_goat():
+def test_mvp_and_blown_layup():
     w = Week(1, date(2026, 9, 13), [leg("A", -200, HIT), leg("B", 250, HIT),
                                     leg("C", -150, MISS), leg("D", 120, MISS)], 40)
     assert w.mvp.person == "B"   # longest odds that hit
-    assert w.goat.person == "C"  # safest pick that missed
+    assert w.blown_layup.person == "C"  # safest pick that missed
 
 
 def test_streaks():
