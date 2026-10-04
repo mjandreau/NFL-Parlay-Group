@@ -15,30 +15,164 @@
         {
           "person": "Matt",
           "pick": "Buffalo Bills -1.5",
+          "opponent": "at Houston Texans",
           "type": "spread",
           "odds": -105,
-          "result": "hit"
+          "result": "hit",
+          "score": "Bills 36, Texans 31"
         },
         {
           "person": "Dad",
           "pick": "Tampa Bay Buccaneers +3.5",
+          "opponent": "at Cincinnati Bengals",
           "type": "spread",
           "odds": -104,
-          "result": "miss"
+          "result": "miss",
+          "score": "Bengals 33, Buccaneers 27"
         },
         {
           "person": "Nick",
           "pick": "Arizona Cardinals +9.5",
+          "opponent": "at Los Angeles Chargers",
           "type": "spread",
           "odds": -113,
-          "result": "hit"
+          "result": "hit",
+          "score": "Cardinals 26, Chargers 14"
         },
         {
           "person": "Dan",
           "pick": "Minnesota Vikings -1.5",
+          "opponent": "vs Green Bay Packers",
           "type": "spread",
           "odds": -110,
-          "result": "hit"
+          "result": "hit",
+          "score": "Vikings 39, Packers 22"
+        }
+      ]
+    },
+    {
+      "week": 2,
+      "date": "2026-09-20",
+      "legs": [
+        {
+          "person": "Matt",
+          "pick": "Green Bay Packers -3.5",
+          "opponent": "at New York Jets",
+          "type": "spread",
+          "odds": -110,
+          "result": "miss",
+          "score": "Packers 20, Jets 17 (OT)"
+        },
+        {
+          "person": "Dad",
+          "pick": "Carolina Panthers -2.5",
+          "opponent": "at Atlanta Falcons",
+          "type": "spread",
+          "odds": -110,
+          "result": "hit",
+          "score": "Panthers 34, Falcons 3"
+        },
+        {
+          "person": "Nick",
+          "pick": "Denver Broncos -2.5",
+          "opponent": "vs Jacksonville Jaguars",
+          "type": "spread",
+          "odds": -110,
+          "result": "hit",
+          "score": "Broncos 20, Jaguars 13"
+        },
+        {
+          "person": "Dan",
+          "pick": "Arizona Cardinals +3.5",
+          "opponent": "vs Seattle Seahawks",
+          "type": "spread",
+          "odds": -110,
+          "result": "miss",
+          "score": "Seahawks 31, Cardinals 7"
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "date": "2026-09-27",
+      "legs": [
+        {
+          "person": "Dad",
+          "pick": "Tampa Bay Buccaneers +1.5",
+          "opponent": "vs Minnesota Vikings",
+          "type": "spread",
+          "odds": -110,
+          "result": "miss",
+          "score": "Vikings 23, Buccaneers 16"
+        },
+        {
+          "person": "Nick",
+          "pick": "Washington Commanders +8.5",
+          "opponent": "vs Seattle Seahawks",
+          "type": "spread",
+          "odds": -110,
+          "result": "hit",
+          "score": "Commanders 33, Seahawks 31"
+        },
+        {
+          "person": "Matt",
+          "pick": "Pittsburgh Steelers +3.5",
+          "opponent": "vs Cincinnati Bengals",
+          "type": "spread",
+          "odds": -110,
+          "result": "hit",
+          "score": "Steelers 30, Bengals 27"
+        },
+        {
+          "person": "Dan",
+          "pick": "Chicago Bears +3.5",
+          "opponent": "vs Philadelphia Eagles",
+          "type": "spread",
+          "odds": -110,
+          "result": "hit",
+          "score": "Bears 27, Eagles 7"
+        }
+      ]
+    },
+    {
+      "week": 4,
+      "date": "2026-10-04",
+      "legs": [
+        {
+          "person": "Matt",
+          "pick": "San Francisco 49ers -3",
+          "opponent": "vs Denver Broncos",
+          "type": "spread",
+          "odds": -110,
+          "result": null,
+          "score": null
+        },
+        {
+          "person": "Nick",
+          "pick": "Houston Texans -3",
+          "opponent": "vs Dallas Cowboys",
+          "type": "spread",
+          "odds": -110,
+          "result": "miss",
+          "score": "Cowboys 34, Texans 30"
+        },
+        {
+          "person": "Dad",
+          "pick": "Los Angeles Rams -3.5",
+          "opponent": "at Philadelphia Eagles",
+          "type": "spread",
+          "odds": -110,
+          "result": "hit",
+          "score": "Rams 24, Eagles 20"
+        },
+        {
+          "person": "Dan",
+          "pick": "Cincinnati Bengals -2.5",
+          "opponent": "vs Jacksonville Jaguars",
+          "type": "spread",
+          "odds": -110,
+          "result": "miss",
+          "score": "Jaguars 22, Bengals 17"
         }
       ]
     }
