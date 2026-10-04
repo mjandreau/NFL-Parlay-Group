@@ -6,6 +6,8 @@ The season lives in one JSON file. One script turns it into `Brolay_<season>.pdf
 the group's record and bankroll, a leaderboard, who beats their odds, weekly awards,
 and a page for every week.
 
+Latest report: https://mjandreau.github.io/NFL-Parlay-Group/
+
 ## Setup
 
 Python 3 (run here on 3.12 and 3.13).
@@ -21,6 +23,7 @@ pip install reportlab matplotlib pytest
 2. After the games: set each leg's result to `"hit"`, `"miss"` or `"push"` and fill in
    the score.
 3. Run `python build_report.py`. The PDF is rewritten in place.
+4. Commit the PDF and push to `main`. The site updates a minute or two later.
 
 Or just paste the picks and results to Claude in this folder and it does steps 1-3.
 
@@ -33,6 +36,8 @@ Or just paste the picks and results to Claude in this folder and it does steps 1
 - `nfl_logo.png` - logo shown at the top of the report. Not in the repo (gitignored);
   drop your own copy next to the script, or the title prints without it.
 - `test_brolay_stats.py` - `python -m pytest -q`
+- `.github/workflows/pages.yml` - publishes the newest `Brolay_*.pdf` to GitHub Pages
+  whenever one is pushed to `main`. It serves the committed PDF; it does not rebuild it.
 
 ## Data format
 
