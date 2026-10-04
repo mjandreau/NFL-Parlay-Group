@@ -1,0 +1,46 @@
+{
+  "season": 2026,
+  "stake_per_person": 10,
+  "members": [
+    "Matt",
+    "Dan",
+    "Dad",
+    "Nick"
+  ],
+  "weeks": [
+    {
+      "week": 1,
+      "date": "2026-09-13",
+      "legs": [
+        {
+          "person": "Matt",
+          "pick": "Buffalo Bills -1.5",
+          "type": "spread",
+          "odds": -105,
+          "result": "hit"
+        },
+        {
+          "person": "Dad",
+          "pick": "Tampa Bay Buccaneers +3.5",
+          "type": "spread",
+          "odds": -104,
+          "result": "miss"
+        },
+        {
+          "person": "Nick",
+          "pick": "Arizona Cardinals +9.5",
+          "type": "spread",
+          "odds": -113,
+          "result": "hit"
+        },
+        {
+          "person": "Dan",
+          "pick": "Minnesota Vikings -1.5",
+          "type": "spread",
+          "odds": -110,
+          "result": "hit"
+        }
+      ]
+    }
+  ]
+}
