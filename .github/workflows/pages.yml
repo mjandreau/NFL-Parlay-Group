@@ -1,0 +1,47 @@
+name: Publish report to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Brolay_*.pdf"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      # The site is the newest committed PDF plus a redirect to it, so the
+      # root URL stays the same from week to week and season to season.
+      - name: Assemble site
+        run: |
+          pdf=$(ls Brolay_*.pdf | sort | tail -n 1)
+          mkdir _site
+          cp "$pdf" _site/
+          cat > _site/index.html <<EOF
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>Pine Meadow Brolay</title>
+          <meta http-equiv="refresh" content="0; url=$pdf">
+          <p><a href="$pdf">Open the latest report</a></p>
+          EOF
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+      - id: deployment
+        uses: actions/deploy-pages@v5
